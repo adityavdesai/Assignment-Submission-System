@@ -12,7 +12,7 @@ import java.util.Map;
 
 /**
  *
- * @author aditya
+ * @author desai
  */
 public class StudentLoginPage extends javax.swing.JFrame {
 
@@ -23,7 +23,7 @@ public class StudentLoginPage extends javax.swing.JFrame {
         initComponents();
     }
 
-    public static User loggedInStudent = null;
+    public static Student loggedInStudent = null;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,10 +157,10 @@ public class StudentLoginPage extends javax.swing.JFrame {
             return;
         }
 
-        User user1 = new User(resultSet.get(0));
-        User user2 = new User(username, password);
-        if (user1.verify(user2)) {
-            loggedInStudent = user2;
+        Student student1 = new Student(resultSet.get(0));
+        Student student2 = new Student(username, password);
+        if (student1.verify(student2)) {
+            loggedInStudent = student2;
             //new StudentPage().setVisible(true);
             this.dispose();
         } else {

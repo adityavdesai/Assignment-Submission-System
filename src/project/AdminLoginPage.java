@@ -13,7 +13,7 @@ import java.util.Properties;
 
 /**
  *
- * @author aditya
+ * @author desai
  */
 public class AdminLoginPage extends javax.swing.JFrame {
 
@@ -140,7 +140,7 @@ public class AdminLoginPage extends javax.swing.JFrame {
 
 
         if (password.equals(credentials.getProperty("adminPassword"))) {
-            //new AdminPage().setVisible(true);
+            new AdminPage().setVisible(true);
             this.dispose();
         }
         else {
@@ -163,7 +163,7 @@ public class AdminLoginPage extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
+        /* Set the Darcula look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         try {
             System.err.close();

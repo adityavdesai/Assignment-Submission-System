@@ -33,6 +33,9 @@ class Database {
 
 // Class with bunch of helper methods related to basic MySQL queries
 public class SQLutils {
+
+    final static boolean DEBUG = false;
+
     Connection connection;
     Statement statement;
     JFrame currentFrame;
@@ -100,27 +103,26 @@ public class SQLutils {
 
 
     // This method inserts values into a table
-    int insert(String table, DbObject object) {
-        int n = -1;
+    int insert(DbObject object) {
         // getValues will return a string in the form of values(1, 2, 3, 4) and so on, allowing us to add multiple rows
-        String query = String.format("insert into %s %s", table, object.getValues());
+        String query = String.format("insert into %s %s", object.getTableName(), object.getValues());
+        if (DEBUG) System.out.println(query);
         try {
-            n = statement.executeUpdate(query);
+            return statement.executeUpdate(query);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(currentFrame, "Error occurred while running query: " + query + "\n" + e.getMessage());
         }
-        return n;
+        return -1;
     }
 
     // This method updates rows in the table
     int update(String query) {
-        int n = -1;
         try {
-            n = statement.executeUpdate(query);
+            return statement.executeUpdate(query);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(currentFrame, "Error occurred while running query: " + query + "\n" + e.getMessage());
         }
-        return n;
+        return -1;
     }
 
     // This method closes the statement and connection objects

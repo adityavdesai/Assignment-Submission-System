@@ -16,7 +16,7 @@ import java.util.Map;
 
 /**
  *
- * @author aditya
+ * @author desai
  */
 public class TeacherLoginPage extends javax.swing.JFrame {
 
@@ -27,7 +27,7 @@ public class TeacherLoginPage extends javax.swing.JFrame {
         initComponents();
     }
 
-    public static User loggedInTeacher = null;
+    public static Teacher loggedInTeacher = null;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -146,7 +146,7 @@ public class TeacherLoginPage extends javax.swing.JFrame {
         }
 
         SQLutils sql = new SQLutils(this);
-        List<Map<String, Object>> resultSet = sql.selectQueryWhere("username, password", "teachers", String.format("username=\'%s\'", username), "");
+        List<Map<String, Object>> resultSet = sql.selectQueryWhere("teacherID as username, password", "teachers", String.format("username=\'%s\'", username), "");
         sql.close();
         if (resultSet.isEmpty()) {
             Utils.showMessage(this, String.format("Invalid username %s!", username));
@@ -154,10 +154,10 @@ public class TeacherLoginPage extends javax.swing.JFrame {
             return;
         }
 
-        User user1 = new User(resultSet.get(0));
-        User user2 = new User(username, password);
-        if (user1.verify(user2)) {
-            loggedInTeacher = user2;
+        Teacher teacher1 = new Teacher(resultSet.get(0));
+        Teacher teacher2 = new Teacher(username, password);
+        if (teacher1.verify(teacher2)) {
+            loggedInTeacher = teacher2;
             //new TeacherPage().setVisible(true);
             this.dispose();
         } else {
