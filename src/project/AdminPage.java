@@ -146,29 +146,83 @@ public class AdminPage extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void selectedButtons() {
-        if (selectSubject.isSelected()) {
-
-        }
-        else if (selectTeacher.isSelected()) {
-
-        }
-        else {
-
-        }
-    }
-
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
-        if (selectSubject.isSelected()) {
-            //new AddSubjectPage().setVisible(true);
+        try {
+            // Adding new Subject
+            if (selectSubject.isSelected()) {
+                JPanel addSubject = new JPanel();
+                addSubject.setLayout(new BoxLayout(addSubject, BoxLayout.Y_AXIS));
+
+                JTextField courseID = new HintTextField("Enter Course ID");
+                JTextField name = new HintTextField("Enter Course name");
+                JTextField coordinator = new HintTextField("Enter Course coordinator");
+
+                addSubject.add(courseID);
+                addSubject.add(name);
+                addSubject.add(coordinator);
+
+                JOptionPane.showMessageDialog(rootPane, addSubject, "Enter Subject Details", JOptionPane.PLAIN_MESSAGE);
+                String idInput = courseID.getText();
+                String nameInput = name.getText();
+                String coodInput = coordinator.getText();
+                if (idInput.equals("") || nameInput.equals("") || coodInput.equals("")) {
+                    Utils.showMessage(this, "Please enter proper details");
+                    return;
+                }
+
+                if (idInput.length() > 10 || nameInput.length() > 30) {
+                    Utils.showMessage(this, "Details cannot be exceed length limit");
+                    return;
+                }
+
+                SQLutils sql = new SQLutils(this);
+                sql.insert(new Subject(idInput, nameInput, coodInput));
+                sql.close();
+
+            // Adding new Teacher
+            } else if (selectTeacher.isSelected()) {
+                JPanel addTeacher = new JPanel();
+                addTeacher.setLayout(new BoxLayout(addTeacher, BoxLayout.Y_AXIS));
+
+                JTextField teacherID = new HintTextField("Teacher ID");
+                JTextField name = new HintTextField("Teacher name");
+                JTextField phone = new HintTextField("Teacher phone number");
+                JTextField email = new HintTextField("email");
+
+                addTeacher.add(teacherID);
+                addTeacher.add(name);
+                addTeacher.add(phone);
+                addTeacher.add(email);
+
+                JOptionPane.showMessageDialog(rootPane, addTeacher, "Enter Subject Details", JOptionPane.PLAIN_MESSAGE);
+                String idInput = teacherID.getText();
+                String nameInput = name.getText();
+                String string;
+                String phoneInput = phone.getText();
+                String emailInput = email.getText();
+                if (idInput.equals("") || nameInput.equals("") || phoneInput.equals("") || emailInput.equals("")) {
+                    Utils.showMessage(this, "Please enter proper details");
+                    return;
+                }
+
+                if (idInput.length() > 10 || nameInput.length() > 30) {
+                    Utils.showMessage(this, "Details cannot be exceed length limit");
+                    return;
+                }
+
+                SQLutils sql = new SQLutils(this);
+                sql.insert(new Teacher(idInput, "changeme", nameInput, Long.parseLong(phoneInput), emailInput));
+                sql.close();
+            }
+
+            // Adding a new Student
+            else {
+                //new AddStudentPage().setVisible(true);
+            }
         }
-        else if (selectTeacher.isSelected()) {
-            //new AddTeacherPage().setVisible(true);
+        catch (Exception e) {
+            Utils.showMessage(this, e.getMessage());
         }
-        else {
-            //new AddStudentPage().setVisible(true);
-        }
-        this.dispose();
     }//GEN-LAST:event_addButtonActionPerformed
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed

@@ -25,6 +25,7 @@ public class TeacherLoginPage extends javax.swing.JFrame {
      */
     public TeacherLoginPage() {
         initComponents();
+        this.getRootPane().setDefaultButton(loginButton);
     }
 
     public static Teacher loggedInTeacher = null;

@@ -22,6 +22,7 @@ public class AdminLoginPage extends javax.swing.JFrame {
      */
     public AdminLoginPage() {
         initComponents();
+        this.getRootPane().setDefaultButton(loginButton);
     }
 
     /**

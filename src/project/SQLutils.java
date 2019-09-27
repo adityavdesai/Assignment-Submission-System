@@ -74,6 +74,7 @@ public class SQLutils {
     // This method returns a ResultSet based on the select query passed to it
     List<Map<String, Object>> query(String query) {
         try {
+            if (DEBUG) System.out.println(query);
             return resultSetToList(statement.executeQuery(String.format("%s;", query)));
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(currentFrame, "Error occurred while running query: " + query + "\n" + e.getMessage());
