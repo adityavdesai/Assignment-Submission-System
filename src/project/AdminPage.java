@@ -7,9 +7,15 @@ package project;
 
 import com.bulenkov.darcula.DarculaLaf;
 
+import javax.lang.model.element.VariableElement;
+import javax.security.auth.SubjectDomainCombiner;
 import javax.swing.*;
+import javax.swing.event.ListDataListener;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.io.*;
-import java.util.Properties;
+import java.util.*;
+import java.util.List;
 
 /**
  *
@@ -17,14 +23,14 @@ import java.util.Properties;
  */
 public class AdminPage extends javax.swing.JFrame {
 
+    public static String defaultPass = Utils.encrypt("changeme");
+
     /**
      * Creates new form AdminPage
      */
     public AdminPage() {
         initComponents();
     }
-
-    static String table;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -155,28 +161,25 @@ public class AdminPage extends javax.swing.JFrame {
 
                 JTextField courseID = new HintTextField("Enter Course ID");
                 JTextField name = new HintTextField("Enter Course name");
-                JTextField coordinator = new HintTextField("Enter Course coordinator");
 
                 addSubject.add(courseID);
                 addSubject.add(name);
-                addSubject.add(coordinator);
 
                 JOptionPane.showMessageDialog(rootPane, addSubject, "Enter Subject Details", JOptionPane.PLAIN_MESSAGE);
                 String idInput = courseID.getText();
                 String nameInput = name.getText();
-                String coodInput = coordinator.getText();
-                if (idInput.equals("") || nameInput.equals("") || coodInput.equals("")) {
+                if (idInput.equals("") || nameInput.equals("")) {
                     Utils.showMessage(this, "Please enter proper details");
                     return;
                 }
 
-                if (idInput.length() > 10 || nameInput.length() > 30) {
+                if (idInput.length() > 5 || nameInput.length() > 20) {
                     Utils.showMessage(this, "Details cannot be exceed length limit");
                     return;
                 }
 
                 SQLutils sql = new SQLutils(this);
-                sql.insert(new Subject(idInput, nameInput, coodInput));
+                sql.insert(new Subject(idInput, nameInput));
                 sql.close();
 
             // Adding new Teacher
@@ -186,21 +189,20 @@ public class AdminPage extends javax.swing.JFrame {
 
                 JTextField teacherID = new HintTextField("Teacher ID");
                 JTextField name = new HintTextField("Teacher name");
-                JTextField phone = new HintTextField("Teacher phone number");
-                JTextField email = new HintTextField("email");
+                JTextField tclass = new HintTextField("Teacher class");
+                JTextField tsub = new HintTextField("Teacher subject");
 
                 addTeacher.add(teacherID);
                 addTeacher.add(name);
-                addTeacher.add(phone);
-                addTeacher.add(email);
+                addTeacher.add(tclass);
+                addTeacher.add(tsub);
 
-                JOptionPane.showMessageDialog(rootPane, addTeacher, "Enter Subject Details", JOptionPane.PLAIN_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane, addTeacher, "Enter Teacher Details", JOptionPane.OK_CANCEL_OPTION);
                 String idInput = teacherID.getText();
                 String nameInput = name.getText();
-                String string;
-                String phoneInput = phone.getText();
-                String emailInput = email.getText();
-                if (idInput.equals("") || nameInput.equals("") || phoneInput.equals("") || emailInput.equals("")) {
+                String classInput = tclass.getText();
+                String subInput = tsub.getText();
+                if (idInput.equals("") || nameInput.equals("") || classInput.equals("") || subInput.equals("")) {
                     Utils.showMessage(this, "Please enter proper details");
                     return;
                 }
@@ -211,13 +213,40 @@ public class AdminPage extends javax.swing.JFrame {
                 }
 
                 SQLutils sql = new SQLutils(this);
-                sql.insert(new Teacher(idInput, "changeme", nameInput, Long.parseLong(phoneInput), emailInput));
+                sql.insert(new Teacher(idInput, nameInput, defaultPass, classInput, subInput));
                 sql.close();
             }
 
             // Adding a new Student
             else {
-                //new AddStudentPage().setVisible(true);
+                JPanel addStudent = new JPanel();
+                addStudent.setLayout(new BoxLayout(addStudent, BoxLayout.Y_AXIS));
+
+                JTextField studentID = new HintTextField("Student ID");
+                JTextField name = new HintTextField("Student name");
+                JTextField tclass = new HintTextField("Student class");
+
+                addStudent.add(studentID);
+                addStudent.add(name);
+                addStudent.add(tclass);
+
+                JOptionPane.showMessageDialog(rootPane, addStudent, "Enter Student Details", JOptionPane.OK_CANCEL_OPTION);
+                String idInput = studentID.getText();
+                String nameInput = name.getText();
+                String classInput = tclass.getText();
+                if (idInput.equals("") || nameInput.equals("") || classInput.equals("")) {
+                    Utils.showMessage(this, "Please enter proper details");
+                    return;
+                }
+
+                if (idInput.length() > 10 || nameInput.length() > 30 || classInput.length() > 5) {
+                    Utils.showMessage(this, "Details cannot be exceed length limit");
+                    return;
+                }
+
+                SQLutils sql = new SQLutils(this);
+                sql.insert(new Student(idInput, defaultPass, nameInput, classInput));
+                sql.close();
             }
         }
         catch (Exception e) {
@@ -227,13 +256,44 @@ public class AdminPage extends javax.swing.JFrame {
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         if (selectSubject.isSelected()) {
-            //new RemoveSubjectPage().setVisible(true);
+            SQLutils sql = new SQLutils(this);
+            List<Map<String, Object>> resultSet = sql.selectQuery("subjectID, subName", Subject.table, "");
+            sql.close();
+
+            if (resultSet.isEmpty()) {
+                Utils.showMessage(this, "No Subjects Added yet");
+            }
+
+            JTable subjectsTable = new JTable();
+            subjectsTable.setRowSelectionAllowed(true);
+
+            DefaultTableModel table = (DefaultTableModel) subjectsTable.getModel();
+            table.addColumn("Course ID");
+            table.addColumn("Course Name");
+
+            for (Map row : resultSet) {
+                table.addRow(new Vector<>(row.values()));
+            }
+
+            JPanel removeSubject = new JPanel();
+            removeSubject.setPreferredSize( new Dimension( 900 , 900 ) );
+            removeSubject.add(subjectsTable);
+            JOptionPane.showMessageDialog(rootPane, subjectsTable, "Subject Details", JOptionPane.OK_CANCEL_OPTION);
+
+            int selectedRow = subjectsTable.getSelectedRow();
+            String val = subjectsTable.getValueAt(selectedRow, 0).toString();
+
+            SQLutils sql1 = new SQLutils(this);
+            sql1.delete(String.format("delete from %s where subjectID=\'%s\'", Subject.table, val));
+            sql1.close();
+
+            JOptionPane.showMessageDialog(this, "Subject Deleted!");
         }
         else if (selectTeacher.isSelected()) {
-            //new RemoveTeacherPage().setVisible(true);
+            //new RemovePage().setVisible(true);
         }
         else {
-            //new RemoveStudentPage().setVisible(true);
+            //new RemovePage().setVisible(true);
         }
         this.dispose();
     }//GEN-LAST:event_removeButtonActionPerformed
@@ -289,14 +349,6 @@ public class AdminPage extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(StudentLoginPage.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             ex.printStackTrace();
         }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new AdminLoginPage().setVisible(true);
-            }
-        });
         //</editor-fold>
 
         /* Create and display the form */

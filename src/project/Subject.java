@@ -7,21 +7,19 @@ public class Subject extends DbObject {
 
     String ID;
     String name;
-    String coordinator;
 
-    Subject(String ID, String name, String coordinator) {
+    Subject(String ID, String name) {
         this.ID = ID;
         this.name = name;
-        this.coordinator = coordinator;
     }
 
     Subject(Map<String, Object> subject) {
-        this(subject.get("ID").toString(), subject.get("name").toString(), subject.get("coordinator").toString());
+        this(subject.get("subjectID").toString(), subject.get("name").toString());
     }
 
     @Override
     String getValues() {
-        return String.format("values (%s, \'%s\', %s);", ID, name, name);
+        return String.format("values (\'%s\', \'%s\');", ID, name);
     }
 
     @Override

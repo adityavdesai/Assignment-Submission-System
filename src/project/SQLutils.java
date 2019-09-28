@@ -25,7 +25,7 @@ class Database {
     }
 
     // Allows us to easily get the new URI if we changed some parameters
-    String getConnectionURI() {
+    String getConnectionURL() {
         return "jdbc:mysql://" + user + ":" + password + "@" + host + ":" + port + "/" + database;
     }
 }
@@ -60,7 +60,7 @@ public class SQLutils {
         try {
             Database db = new Database(database, host, password, port, username);
             Class.forName("java.sql.Driver");
-            connection = DriverManager.getConnection(db.getConnectionURI());
+            connection = DriverManager.getConnection(db.getConnectionURL());
             statement = connection.createStatement();
         } catch (ClassNotFoundException e) {
             JOptionPane.showMessageDialog(currentFrame, "Couldn't find required class!\n" + e.getMessage());
@@ -89,17 +89,8 @@ public class SQLutils {
 
     // This method returns a ResultSet after formulating a query based on the parameters passed to it
     List<Map<String, Object>> selectQueryWhere(String items, String table, String whereCondition, String miscellaneous) {
-        return this.selectQuery(items, table, String.format("where %s %s", whereCondition, miscellaneous));
-    }
-
-    // This method returns a ResultSet after formulating a query based on the parameters passed to it
-    List<Map<String, Object>> selectJoin(String items, String tables, String onCondition, String miscellaneous) {
-        return this.selectQuery(items, tables.replace(", ", " join ") + " on " + onCondition, miscellaneous);
-    }
-
-    // This method returns a ResultSet after formulating a query based on the parameters passed to it
-    List<Map<String, Object>> selectJoinWhere(String items, String tables, String onCondition, String whereCondition, String miscellaneous) {
-        return this.selectQuery(items, tables.replace(", ", " join ") + " on " + onCondition, String.format("where %s %s", whereCondition, miscellaneous));
+        List<Map<String, Object>> list =  this.selectQuery(items, table, String.format("where %s %s", whereCondition, miscellaneous));
+        return list;
     }
 
 
@@ -116,8 +107,28 @@ public class SQLutils {
         return -1;
     }
 
+    int insert(String query) {
+        if (DEBUG) System.out.println(query);
+        try {
+            return statement.executeUpdate(query);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(currentFrame, "Error occurred while running query: " + query + "\n" + e.getMessage());
+        }
+        return -1;
+    }
+
     // This method updates rows in the table
     int update(String query) {
+        try {
+            return statement.executeUpdate(query);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(currentFrame, "Error occurred while running query: " + query + "\n" + e.getMessage());
+        }
+        return -1;
+    }
+
+    // This method updates rows in the table
+    int delete(String query) {
         try {
             return statement.executeUpdate(query);
         } catch (SQLException e) {
@@ -148,7 +159,7 @@ public class SQLutils {
         int columns = md.getColumnCount();
         List<Map<String, Object>> rows = new ArrayList<>();
         while (rs.next()) {
-            Map<String, Object> row = new HashMap<>(columns);
+            Map<String, Object> row = new LinkedHashMap<>(columns);
             for (int i = 1; i <= columns; ++i) {
                 row.put(md.getColumnName(i), rs.getObject(i));
             }

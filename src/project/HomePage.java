@@ -7,6 +7,8 @@ import javax.swing.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -132,7 +134,7 @@ public class HomePage extends javax.swing.JFrame {
     }//GEN-LAST:event_adminButtonActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        Utils.exit(this);
+        Utils.exit(this, "Exiting");
     }//GEN-LAST:event_exitButtonActionPerformed
 
 

@@ -147,7 +147,7 @@ public class TeacherLoginPage extends javax.swing.JFrame {
         }
 
         SQLutils sql = new SQLutils(this);
-        List<Map<String, Object>> resultSet = sql.selectQueryWhere("teacherID as username, password", "teachers", String.format("username=\'%s\'", username), "");
+        List<Map<String, Object>> resultSet = sql.selectQueryWhere("*", "teachers", String.format("username=\'%s\'", username), "");
         sql.close();
         if (resultSet.isEmpty()) {
             Utils.showMessage(this, String.format("Invalid username %s!", username));
@@ -158,8 +158,8 @@ public class TeacherLoginPage extends javax.swing.JFrame {
         Teacher teacher1 = new Teacher(resultSet.get(0));
         Teacher teacher2 = new Teacher(username, password);
         if (teacher1.verify(teacher2)) {
-            loggedInTeacher = teacher2;
-            //new TeacherPage().setVisible(true);
+            loggedInTeacher = teacher1;
+            new TeacherPage().setVisible(true);
             this.dispose();
         } else {
             Utils.showMessage(this, "Invalid password for user " + username);

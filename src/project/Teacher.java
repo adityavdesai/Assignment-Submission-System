@@ -6,31 +6,31 @@ public class Teacher extends DbObject {
     final static String table = "teachers";
 
     String teacherID;
-    String password;
     String name;
-    long phone;
-    String email;
+    String password;
+    String tClass;
+    String subID;
 
-    Teacher(String teacherID, String password, String name, long phone, String email) {
+    Teacher(String teacherID, String name, String password, String tClass, String subID) {
         this.teacherID = teacherID;
-        this.password = password;
         this.name = name;
-        this.phone = phone;
-        this.email = email;
+        this.password = password;
+        this.tClass = tClass;
+        this.subID = subID;
     }
 
     Teacher(String username, String password) {
-        this(username, password, "", -1, "");
+        this(username, "", password, "", "");
     }
 
 
     Teacher(Map<String, Object> teacher) {
-        this(teacher.get("teacherID").toString(), teacher.get("password").toString(), teacher.get("name").toString(), Long.parseLong(teacher.get("phone").toString()), teacher.get("email").toString());
+        this(teacher.get("teacherID").toString(), teacher.get("tName").toString(), teacher.get("password").toString(), teacher.get("tClass").toString(), teacher.get("subID").toString());
     }
 
     @Override
     String getValues() {
-        return String.format("values (%s, \'%s\', \'%s\', \'%s\', %s);", teacherID, password, name, phone, email);
+        return String.format("values (\'%s\', \'%s\', \'%s\', \'%s\', \'%s\');", teacherID, name, password, tClass, subID);
     }
 
     @Override

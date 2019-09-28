@@ -5,9 +5,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class Utils {
+
+
+
     // This function shows a message dialog and exits
-    static void exit(JFrame currentFrame) {
-        JOptionPane.showMessageDialog(currentFrame, "Exiting!");
+    static void exit(JFrame currentFrame, String message) {
+        JOptionPane.showMessageDialog(currentFrame, message);
         System.exit(0);
     }
 
