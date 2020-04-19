@@ -3,7 +3,7 @@ package project;
 import java.util.Map;
 
 public class Solution extends DbObject {
-    final static String table = "assignments";
+    final static String table = "solutions";
 
     String studID;
     String subID;

@@ -197,6 +197,7 @@ public class AdminPage extends javax.swing.JFrame {
                 addTeacher.add(tclass);
                 addTeacher.add(tsub);
 
+
                 JOptionPane.showMessageDialog(rootPane, addTeacher, "Enter Teacher Details", JOptionPane.OK_CANCEL_OPTION);
                 String idInput = teacherID.getText();
                 String nameInput = name.getText();
@@ -225,16 +226,19 @@ public class AdminPage extends javax.swing.JFrame {
                 JTextField studentID = new HintTextField("Student ID");
                 JTextField name = new HintTextField("Student name");
                 JTextField tclass = new HintTextField("Student class");
+                JTextField subjects = new HintTextField("Student subjects");
 
                 addStudent.add(studentID);
                 addStudent.add(name);
                 addStudent.add(tclass);
+                addStudent.add(subjects);
 
                 JOptionPane.showMessageDialog(rootPane, addStudent, "Enter Student Details", JOptionPane.OK_CANCEL_OPTION);
                 String idInput = studentID.getText();
                 String nameInput = name.getText();
                 String classInput = tclass.getText();
-                if (idInput.equals("") || nameInput.equals("") || classInput.equals("")) {
+                String subjectInput = subjects.getText();
+                if (idInput.equals("") || nameInput.equals("") || classInput.equals("") || subjectInput.equals("")) {
                     Utils.showMessage(this, "Please enter proper details");
                     return;
                 }
@@ -246,6 +250,8 @@ public class AdminPage extends javax.swing.JFrame {
 
                 SQLutils sql = new SQLutils(this);
                 sql.insert(new Student(idInput, defaultPass, nameInput, classInput));
+                for(String x : subjectInput.split(" "))
+                    sql.insert("insert into subjectstudent values (\'" + x + "\',\'" + idInput + "\')");
                 sql.close();
             }
         }
@@ -290,12 +296,73 @@ public class AdminPage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Subject Deleted!");
         }
         else if (selectTeacher.isSelected()) {
-            //new RemovePage().setVisible(true);
+            SQLutils sql = new SQLutils(this);
+            List<Map<String, Object>> resultSet = sql.selectQuery("teacherID, tName", Teacher.table, "");
+            sql.close();
+
+            if (resultSet.isEmpty()) {
+                Utils.showMessage(this, "No Teachers Added yet");
+            }
+
+            JTable subjectsTable = new JTable();
+            subjectsTable.setRowSelectionAllowed(true);
+
+            DefaultTableModel table = (DefaultTableModel) subjectsTable.getModel();
+            table.addColumn("Teacher ID");
+            table.addColumn("Teacher Name");
+
+            for (Map row : resultSet) {
+                table.addRow(new Vector<>(row.values()));
+            }
+
+            JPanel removeSubject = new JPanel();
+            removeSubject.setPreferredSize( new Dimension( 900 , 900 ) );
+            removeSubject.add(subjectsTable);
+            JOptionPane.showMessageDialog(rootPane, subjectsTable, "Teacher Details", JOptionPane.OK_CANCEL_OPTION);
+
+            int selectedRow = subjectsTable.getSelectedRow();
+            String val = subjectsTable.getValueAt(selectedRow, 0).toString();
+
+            SQLutils sql1 = new SQLutils(this);
+            sql1.delete(String.format("delete from %s where teacherID=\'%s\'", Teacher.table, val));
+            sql1.close();
+
+            JOptionPane.showMessageDialog(this, "Teacher Deleted!");
         }
         else {
-            //new RemovePage().setVisible(true);
+            SQLutils sql = new SQLutils(this);
+            List<Map<String, Object>> resultSet = sql.selectQuery("studentID, stName", Student.table, "");
+            sql.close();
+
+            if (resultSet.isEmpty()) {
+                Utils.showMessage(this, "No Students Added yet");
+            }
+
+            JTable subjectsTable = new JTable();
+            subjectsTable.setRowSelectionAllowed(true);
+
+            DefaultTableModel table = (DefaultTableModel) subjectsTable.getModel();
+            table.addColumn("Student ID");
+            table.addColumn("Student Name");
+
+            for (Map row : resultSet) {
+                table.addRow(new Vector<>(row.values()));
+            }
+
+            JPanel removeSubject = new JPanel();
+            removeSubject.setPreferredSize( new Dimension( 900 , 900 ) );
+            removeSubject.add(subjectsTable);
+            JOptionPane.showMessageDialog(rootPane, subjectsTable, "Student Details", JOptionPane.OK_CANCEL_OPTION);
+
+            int selectedRow = subjectsTable.getSelectedRow();
+            String val = subjectsTable.getValueAt(selectedRow, 0).toString();
+
+            SQLutils sql1 = new SQLutils(this);
+            sql1.delete(String.format("delete from %s where studentID=\'%s\'", Student.table, val));
+            sql1.close();
+
+            JOptionPane.showMessageDialog(this, "Student Deleted!");
         }
-        this.dispose();
     }//GEN-LAST:event_removeButtonActionPerformed
 
     private void changePasswordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_changePasswordButtonActionPerformed

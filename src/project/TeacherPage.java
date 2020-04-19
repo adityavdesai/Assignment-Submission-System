@@ -179,23 +179,26 @@ public class TeacherPage extends javax.swing.JFrame {
         JTextField assNo = new HintTextField("Assignment Number");
         JTextField title = new HintTextField("Title");
         JTextField desc = new HintTextField("Description");
+        JTextField lastdate = new HintTextField("Last Date");
 
         addAssignment.add(assNo);
         addAssignment.add(title);
         addAssignment.add(desc);
+        addAssignment.add(lastdate);
 
         JOptionPane.showMessageDialog(rootPane, addAssignment, "Enter Assignment Details", JOptionPane.OK_CANCEL_OPTION);
         String numInput = assNo.getText();
         String titleInput = title.getText();
         String descInput = desc.getText();
+        String dateInput = lastdate.getText();
 
-        if (numInput.equals("") || titleInput.equals("") || descInput.equals("")) {
+        if (numInput.equals("") || titleInput.equals("") || descInput.equals("") || dateInput.equals("")) {
             Utils.showMessage(this, "Please enter proper details");
             return;
         }
 
         SQLutils sql = new SQLutils(this);
-        sql.insert(new Assignment(TeacherLoginPage.loggedInTeacher.teacherID, TeacherLoginPage.loggedInTeacher.subID, numInput, titleInput, descInput));
+        sql.insert(new Assignment(TeacherLoginPage.loggedInTeacher.teacherID, TeacherLoginPage.loggedInTeacher.subID, numInput, titleInput, descInput, dateInput));
         sql.close();
     }//GEN-LAST:event_addButtonActionPerformed
 

@@ -89,6 +89,7 @@ public class ShowSolutionsPage extends javax.swing.JFrame {
         solutionsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         solutionScroll.setViewportView(solutionsTable);
         solutionsTable.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        updateTable();
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -149,7 +150,7 @@ public class ShowSolutionsPage extends javax.swing.JFrame {
         DefaultTableModel table = (DefaultTableModel) solutionsTable.getModel();
         SQLutils sql = new SQLutils(this);
         List<Map<String, Object>> resultSet = sql.selectQueryWhere("s.studID, st.stName",
-                "solutions s inner join students st on s.studID = st.teacherID",
+                "solutions s inner join students st on s.studID = st.studentID",
                 String.format(" st.sClass = \'%s\'", TeacherLoginPage.loggedInTeacher.tClass), "");
         sql.close();
         for (Map row : resultSet) {

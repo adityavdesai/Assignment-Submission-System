@@ -147,7 +147,7 @@ public class TeacherLoginPage extends javax.swing.JFrame {
         }
 
         SQLutils sql = new SQLutils(this);
-        List<Map<String, Object>> resultSet = sql.selectQueryWhere("*", "teachers", String.format("username=\'%s\'", username), "");
+        List<Map<String, Object>> resultSet = sql.selectQueryWhere("*", "teachers", String.format("teacherID=\'%s\'", username), "");
         sql.close();
         if (resultSet.isEmpty()) {
             Utils.showMessage(this, String.format("Invalid username %s!", username));

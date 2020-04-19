@@ -53,7 +53,7 @@ public class SelectAssignmentPage extends javax.swing.JFrame {
             new Object [][] {
             },
             new String [] {
-                "Assignment number", "Assignment title"
+                "Assignment number", "Assignment title", "Last Date"
             }
         ));
         assignmentsTable.setRowSelectionAllowed(true);
@@ -141,7 +141,7 @@ public class SelectAssignmentPage extends javax.swing.JFrame {
     void updateTable() {
         DefaultTableModel table = (DefaultTableModel) assignmentsTable.getModel();
         SQLutils sql = new SQLutils(this);
-        List<Map<String, Object>> resultSet = sql.selectQueryWhere("assNo, title", "assignments", String.format(" subID = \'%s\' and studID = \'%s\'", selectedSubject, StudentLoginPage.loggedInStudent.studentID), "");
+        List<Map<String, Object>> resultSet = sql.selectQueryWhere("assNo, title, lastdate", "assignments", String.format(" subID = \'%s\' and tchID = \'%s\'", selectedSubject, TeacherLoginPage.loggedInTeacher.teacherID), "");
         sql.close();
         if (resultSet.isEmpty()) {
             Utils.showMessage(this, "No Assignments currently available for this Subject!");
